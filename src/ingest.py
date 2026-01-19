@@ -53,7 +53,10 @@ def main():
     ingest("income-statement", "WMT", limit=5)  # Ingest last 10 income statements for Walmart
     ingest("balance-sheet-statement", "WMT", limit=5)  # Ingest last 10 balance sheets for Walmart
     ingest("cash-flow-statement", "WMT", limit=5)  # Ingest last 10 cash flow statements for Walmart
-    logger.info("Ingestion process completed.")
+    ingest("profile", "WMT", limit=5)  # Ingest walmart's profile data        
+    logger.info("Ingestion process finished.")
+
+
 
 if __name__ == "__main__":    
     main()
