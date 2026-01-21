@@ -74,5 +74,5 @@ CREATE TABLE fact_financials (
     free_cash_flow NUMERIC(20, 2),
 
     FOREIGN KEY (company_id) REFERENCES dim_company(company_id),
-    FOREIGN KEY (date_key) REFERENCES dim_date(date_key)
+    FOREIGN KEY(date_key) REFERENCES dim_date(date_key)
 );
