@@ -28,7 +28,7 @@ This project uses conda environment for reproducibility.
 
 ```bash
 conda env create -f environment.yml
-conda activate walmart-financials
+conda activate wmt-financials
 
 
 

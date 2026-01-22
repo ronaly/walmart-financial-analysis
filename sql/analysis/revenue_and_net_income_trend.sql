@@ -7,7 +7,7 @@ Question: Is Walmart growing, and is profit keeping pace?
 -- --------------------------------------------------------
 -- Revenue & Net Income Trend
 -- Insight Angle: Growth consistency / 
----               Revenue vs Profitability divergence
+--                Revenue vs Profitability divergence
 -- --------------------------------------------------------
 SELECT
     d.fiscal_year,

@@ -7,7 +7,7 @@ Question: Are reported profits backed by real cash?
 -- --------------------------------------------------------
 -- Cash Flow Quality
 -- Insigt Angle: Earning quality /
----              Red flags in accounting vs cash
+--              Red flags in accounting vs cash
 -- --------------------------------------------------------
 SELECT
     d.fiscal_year,

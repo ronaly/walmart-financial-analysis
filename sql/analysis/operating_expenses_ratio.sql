@@ -7,7 +7,7 @@ Question: Are operating expenses growing faster than revenue?
 -- --------------------------------------------------------
 -- Operating Expenses vs Revenue
 -- Insigt Angle: Operation Efficiency /
----              Scale benefits (or lack thereof)
+--               Scale benefits (or lack thereof)
 -- --------------------------------------------------------
 SELECT
     d.fiscal_year,

@@ -7,7 +7,7 @@ Question: How large is the gap between operating income and EBITDA?
 -- --------------------------------------------------------
 -- EBITDA vs Operating Income
 -- Insigt Angle: Depreciation Intensity /
----              Asset-heavy operations
+--               Asset-heavy operations
 -- --------------------------------------------------------
 SELECT
     d.fiscal_year,

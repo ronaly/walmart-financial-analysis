@@ -7,7 +7,7 @@ Question: Is Walmart becoming more or less profitable?
 -- --------------------------------------------------------
 -- Profitability Margins Analysis
 -- Insigt Angle: Margin compression or expansion /
----              Cost control effectiveness
+--               Cost control effectiveness
 -- --------------------------------------------------------
 SELECT
     d.fiscal_year,

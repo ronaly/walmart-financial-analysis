@@ -7,7 +7,7 @@ Question: Is Walmart becoming more or less leveraged?
 -- --------------------------------------------------------
 -- Debt & Capital Structure
 -- Insigt Angle: Financial Risk /
----              Balance Sheet Strength
+--               Balance Sheet Strength
 -- --------------------------------------------------------
 SELECT
     d.fiscal_year,
