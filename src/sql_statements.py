@@ -1,3 +1,7 @@
+#This is obsolete. No longer needed since we are now building 
+# SQL dynamically in load.py based on the TABLE_CONFIG mapping in config.py. 
+# Keeping this file for reference for now, but it can be deleted in the future.
+
 FACT_FINANCIALS_INSERT_SQL= """
 INSERT INTO fact_financials (
             company_id,

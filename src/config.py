@@ -39,6 +39,7 @@ FACT_FINANCIALS_MAPPING = {
     "inventory": "inventory",
     "accountsReceivables": "accounts_receivable",
     "totalDebt": "total_debt",
+    "accountPayables": "account_payables",
     #Cash Flow Statement Fields
     "operatingCashFlow": "operating_cash_flow",
     "investingCashFlow": "investing_cash_flow",
