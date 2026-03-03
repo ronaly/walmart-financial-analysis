@@ -4,9 +4,10 @@ from datetime import datetime
 import mysql.connector
 from sqlalchemy import INT, VARCHAR
 from config import MYSQL_CONFIG
-from config import FACT_FIELD_MAPPING
-from sql_statements import FACT_FINANCIALS_INSERT_SQL
+from config import TABLE_CONFIG
 from logger import setup_logger
+
+
 
 logger = setup_logger("load_logger", "load.log")
 
@@ -111,19 +112,6 @@ def load_dim_date():
         logger.info("Database connection closed.")  
 
 
-#Map raw fact data fields to DB schema fields
-def map_fact_record(raw_data:dict) -> dict:
-    """
-    Maps a raw FMP financial record to fact_financials fields.
-    Missing fields default to None.
-    """
-    
-    mapped_record = {}
-    for raw_field, db_field in FACT_FIELD_MAPPING.items():
-        mapped_record[db_field] = raw_data.get(raw_field)
-
-    return mapped_record
-
 #get the company_id from dim_company table
 def get_company_id(ticker:str) -> int:
     """
@@ -150,6 +138,41 @@ def get_company_id(ticker:str) -> int:
         conn.close()
 
 
+def build_upsert_sql(table_name):
+    table_conf = TABLE_CONFIG.get(table_name)
+
+    keys = table_conf["keys"]
+    mapping = table_conf["mapping"]
+
+    fact_columns = list(mapping.values())
+    all_columns = keys + fact_columns
+    placeholders = ["%s"] * len(all_columns)
+
+    update_clause = ",\n            ".join(f"{col}=COALESCE(VALUES({col}), {col})" for col in fact_columns)
+
+    return f"""
+        INSERT INTO {table_name} (
+            {', '.join(all_columns)}
+        )
+        VALUES ({', '.join(placeholders)})
+        ON DUPLICATE KEY UPDATE 
+            {update_clause};
+    """
+ 
+
+def build_values(table_name, raw_record, key_values_dict):
+    table_conf = TABLE_CONFIG[table_name]
+
+    keys = table_conf["keys"]
+    mapping = table_conf["mapping"]
+
+    key_values = [key_values_dict[key] for key in keys]
+    fact_values = [raw_record.get(raw_key) for raw_key in mapping.keys()]
+
+    return tuple(key_values + fact_values)
+
+
+
 #Insert raw data into fact_financials table
 def load_fact_financials(ticker: str):    
 
@@ -165,47 +188,28 @@ def load_fact_financials(ticker: str):
     try:
     
         company_id = get_company_id(ticker)
-        sql = FACT_FINANCIALS_INSERT_SQL
+        sql = build_upsert_sql("fact_financials")
         
 
         for file in files:
             with open(file, 'r') as f:
                 records = json.load(f)
                 for r in records:
-                    mapped = map_fact_record(r)
+                    
                     if not r.get("date"):
                         logger.warning(f"Skipping record with missing date in file {file.name}")
                         continue
-                    period_type = "annual" if r.get("period") == "FY" else "quarterly"  
+
+                    key_data = {
+                        "company_id": company_id,
+                        "date_key": r.get("date"),
+                        "period_type": "annual" if r.get("period") == "FY" else "quarterly" 
+                    }
                     
-                    cursor.execute(sql,(
-                        company_id,
-                        r.get("date"),
-                        period_type,
-                        mapped.get("revenue"),
-                        mapped.get("cost_of_revenue"),
-                        mapped.get("gross_profit"),
-                        mapped.get("operating_expenses"),
-                        mapped.get("operating_income"),
-                        mapped.get("net_income"),
-                        mapped.get("ebit"),   
-                        mapped.get("ebitda"),
-                        mapped.get("interest_expense"),
-                        mapped.get("total_assets"),
-                        mapped.get("total_liabilities"),
-                        mapped.get("total_equity"),
-                        mapped.get("current_assets"),
-                        mapped.get("current_liabilities"),
-                        mapped.get("cash_and_cash_equivalents"),
-                        mapped.get("inventory"),
-                        mapped.get("accounts_receivable"),
-                        mapped.get("total_debt"),
-                        mapped.get("operating_cash_flow"),
-                        mapped.get("investing_cash_flow"),
-                        mapped.get("financing_cash_flow"),
-                        mapped.get("capital_expenditure"),
-                        mapped.get("free_cash_flow")          
-                    ))               
+                    values = build_values("fact_financials", r, key_data)
+                    
+                    cursor.execute(sql, values)
+
         conn.commit()   
         logger.info(f"Fact financials loaded for {ticker}.")
     except Exception as e:
@@ -216,7 +220,8 @@ def load_fact_financials(ticker: str):
         cursor.close()
         conn.close()
         
-                    
+
+
 
 if __name__ == "__main__":
     #load_dim_date()

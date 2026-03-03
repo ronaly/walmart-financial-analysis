@@ -18,7 +18,7 @@ MYSQL_CONFIG = {
     'database': os.getenv("MYSQL_DATABASE")           
 }
 
-FACT_FIELD_MAPPING = {
+FACT_FINANCIALS_MAPPING = {
     #Income Statement Fields
     "revenue": "revenue",
     "costOfRevenue": "cost_of_revenue",
@@ -45,4 +45,11 @@ FACT_FIELD_MAPPING = {
     "financingCashFlow": "financing_cash_flow",
     "capitalExpenditure": "capital_expenditure", 
     "freeCashFlow": "free_cash_flow"
+}
+
+TABLE_CONFIG = {
+    "fact_financials": {
+        "keys": ["company_id", "date_key", "period_type"],
+        "mapping": FACT_FINANCIALS_MAPPING
+    }
 }
